@@ -1,0 +1,21 @@
+## Interface: 16001
+## Version: @project-version@
+## Author: Luckyone, Permok
+
+## AllowLoadGameType: camelot
+## ExcludeLoadGameType: standard, classic
+
+## SavedVariables: LuckyMokRemindersDB
+
+## Title: |cff4beb2cLuckyMokReminders|r
+## Notes: Reminder icons for missing class buffs, buff food, flasks and weapon enchants
+## IconTexture: Interface\Icons\Spell_Misc_Food
+
+Init.lua
+
+Locales\enUS.lua
+Locales\deDE.lua
+
+Data.lua
+Core.lua
+Config.lua
