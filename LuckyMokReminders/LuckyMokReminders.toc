@@ -1,6 +1,7 @@
 ## Interface: 16001
 ## Version: @project-version@
 ## Author: Luckyone, Permok
+## X-Curse-Project-ID: 1815388
 
 ## AllowLoadGameType: camelot
 ## ExcludeLoadGameType: standard, classic
