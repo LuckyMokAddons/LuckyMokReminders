@@ -9,6 +9,10 @@ Private.Reminders = {
 		key = 'markOfTheWild', class = 'DRUID', name = 1126, icon = 1126, group = 'ALL',
 		spells = { 1126, 5232, 6756, 5234, 8907, 9884, 9885, 21849, 21850 },
 	},
+	{
+		key = 'thorns', class = 'DRUID', name = 467, icon = 467,
+		spells = { 467, 782, 1075, 8914, 9756, 9910 },
+	},
 
 	-- Hunter
 	{
@@ -68,14 +72,20 @@ Private.Reminders = {
 
 	-- Shaman
 	{
-		key = 'lightningShield', class = 'SHAMAN', name = 324, icon = 324, disabled = true,
-		spells = { 324, 325, 905, 945, 8134, 10431, 10432 },
+		key = 'shamanShield', class = 'SHAMAN', label = L["Shield"], icon = 324,
+		spells = { 324, 325, 905, 945, 8134, 10431, 10432, 408510 },
 	},
 
 	-- Warlock
 	{
 		key = 'demonArmor', class = 'WARLOCK', label = L["Armor"], icon = 706,
 		spells = { 687, 696, 706, 1086, 11733, 11734, 11735, 403619 },
+	},
+	-- The talent spell triggers a separate aura on the warlock
+	{
+		key = 'soulLink', class = 'WARLOCK', name = 19028, icon = 19028,
+		known = { 19028 },
+		spells = { 25228 },
 	},
 	-- A Demonic Sacrifice buff counts as having the pet
 	{

@@ -42,6 +42,7 @@ L["Reminders"] = true
 L["Reminders work in combat. Group counts are hidden in combat and other restricted states."] = true
 L["Reset Position"] = true
 L["Right"] = true
+L["Shield"] = true
 L["Show Text"] = true
 L["Spacing"] = true
 L["Spell IDs separated by commas, any of them counts. Use one reminder per buff."] = true

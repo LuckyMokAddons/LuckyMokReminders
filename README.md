@@ -23,13 +23,13 @@ Reminder icons for WoW: Forever that show when you are missing a class buff, buf
 
 | Class | Reminders |
 | --- | --- |
-| Druid | Mark of the Wild (group count) |
+| Druid | Mark of the Wild (group count), Thorns |
 | Hunter | Aspect, Trueshot Aura, Pet |
 | Mage | Arcane Intellect (group count), Armor |
 | Paladin | Blessing, Aura, Righteous Fury (off by default) |
 | Priest | Power Word: Fortitude (group count), Divine Spirit (group count), Shadow Protection (off by default), Inner Fire |
-| Shaman | Lightning Shield (off by default) |
-| Warlock | Armor, Pet |
+| Shaman | Shield (Lightning Shield or Water Shield) |
+| Warlock | Armor, Soul Link, Pet |
 | Warrior | Battle Shout (in combat by default) |
 | Everyone | Food, Flask, Main Hand and Off Hand weapon enchants |
 
