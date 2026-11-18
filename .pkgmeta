@@ -1,0 +1,9 @@
+package-as: LuckyMokReminders
+
+move-folders:
+  LuckyMokReminders/LuckyMokReminders: LuckyMokReminders
+
+ignore:
+  - .github/*
+  - .gitignore
+  - README.md
