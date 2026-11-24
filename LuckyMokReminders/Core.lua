@@ -45,7 +45,9 @@ local WeaponFishingPole = Enum.ItemWeaponSubclass.Fishingpole
 
 -- Slot start point and the point it follows on the previous slot
 -- The container point, the point it closes the slot on and the offset sign
+-- Center is the holder point a centered row stays in the middle of
 local Growth = {
+	CENTER = { start = 'TOPLEFT', after = 'TOPRIGHT', box = 'TOPRIGHT', boxEnd = 'TOPLEFT', x = 1, y = 0, center = 'TOP' },
 	RIGHT = { start = 'TOPLEFT', after = 'TOPRIGHT', box = 'TOPRIGHT', boxEnd = 'TOPLEFT', x = 1, y = 0 },
 	LEFT = { start = 'TOPRIGHT', after = 'TOPLEFT', box = 'TOPLEFT', boxEnd = 'TOPRIGHT', x = -1, y = 0 },
 	DOWN = { start = 'TOPLEFT', after = 'BOTTOMLEFT', box = 'BOTTOMLEFT', boxEnd = 'TOPLEFT', x = 0, y = -1, vertical = true },
@@ -138,6 +140,48 @@ local function SpellMap(spells)
 	return map
 end
 
+-- Parented to UIParent so a hidden holder does not pause the container and leave a stale size
+local function CreateContainer()
+	local container = CreateFrame('AuraContainer', nil, UIParent, 'CustomAuraContainerTemplate, DisableUntrustedLayoutScriptsTemplate')
+	container:SetSize(1, 1)
+	container:Hide()
+	container:SetEditModePreviewEnabled(false)
+	container:SetUnit('player')
+
+	return container
+end
+
+-- Shared by all reminders, 1px plus one stride wide per present aura, so its middle is half of the hidden length
+local center = CreateContainer()
+center:SetFlowLayoutPadding(1, 0, 0, 0)
+
+local function UpdateCenter(object, stride)
+	if object.stride == stride then return end
+
+	local def = object.def
+	local layout = { elementWidth = stride, elementHeight = 1 }
+
+	if object.kind == 'enchant' then
+		if not object.stride then
+			center:AddItemEnchantment(ItemEnchantmentSlot[def.enchant], { initializeFrame = InitializeAuraFrame })
+		end
+
+		center:SetItemEnchantmentLayout(layout)
+	else
+		if not object.stride then
+			center:AddAuraGroup(def.key, 'HELPFUL', {
+				candidateFilters = { includeSpellIDs = SpellMap(def.spells) },
+				initializeFrame = InitializeAuraFrame,
+				maxFrameCount = 1,
+			})
+		end
+
+		center:SetAuraGroupLayout(def.key, layout)
+	end
+
+	object.stride = stride
+end
+
 local function CreateObject(kind, def, settings)
 	local object = { kind = kind, def = def, settings = settings, active = false, missing = 0 }
 
@@ -170,12 +214,7 @@ local function CreateObject(kind, def, settings)
 		count:SetTextColor(1, 1, 1)
 		object.count = count
 	elseif kind == 'aura' or kind == 'enchant' then
-		-- Parented to UIParent so a hidden holder does not pause the container and leave a stale size
-		local container = CreateFrame('AuraContainer', nil, UIParent, 'CustomAuraContainerTemplate, DisableUntrustedLayoutScriptsTemplate')
-		container:SetSize(1, 1)
-		container:Hide()
-		container:SetEditModePreviewEnabled(false)
-		container:SetUnit('player')
+		local container = CreateContainer()
 		object.container = container
 
 		if kind == 'enchant' then
@@ -282,6 +321,10 @@ local function ApplyStyle(object, cellWidth, cellHeight, growth, extent)
 			container:SetAuraGroupLayout('reminder', layout)
 		end
 	end
+
+	if container and growth.center then
+		UpdateCenter(object, extent - 1)
+	end
 end
 
 local function GetStride(cellWidth, cellHeight, growth)
@@ -347,9 +390,19 @@ function Private:Layout()
 			container:ClearAllPoints()
 		end
 
+		-- Only active reminders may move the row
+		if container and growth.center then
+			local counted = object.active and not preview
+			if object.kind == 'enchant' then
+				center:SetItemEnchantmentEnabled(ItemEnchantmentSlot[object.def.enchant], counted)
+			else
+				center:SetAuraGroupEnabled(object.def.key, counted)
+			end
+		end
+
 		if object.active then
-			local anchor = previous or holder
-			local anchorPoint = previous and growth.after or growth.start
+			local anchor = previous or (growth.center and center or holder)
+			local anchorPoint = previous and growth.after or growth.center or growth.start
 			slot:SetPoint(growth.start, anchor, anchorPoint)
 
 			if container and not preview then
@@ -386,11 +439,20 @@ function Private:Layout()
 		end
 	end
 
+	-- Starts where the row would with every reminder showing, the first slot follows its middle
+	if growth.center then
+		center:ClearAllPoints()
+		center:SetPoint(growth.start, holder, growth.center, (Private.db.spacing - shown * stride - 1) / 2, 0)
+	end
+
+	center:SetShown(growth.center ~= nil)
+
 	-- Preview slots are all fixed size, so the drag handle can span the row without reading secret geometry
 	if preview then
 		local length = max(shown, 1) * stride
+		local point = growth.center or growth.start
 		mover:ClearAllPoints()
-		mover:SetPoint(growth.start, holder, growth.start)
+		mover:SetPoint(point, holder, point)
 		mover:SetSize(growth.vertical and cellWidth or length, growth.vertical and length or cellHeight)
 	end
 end
@@ -598,6 +660,10 @@ local function RebuildOrder()
 		object.slot:ClearAllPoints()
 		object.container:Hide()
 		object.container:ClearAllPoints()
+
+		if object.stride then
+			center:SetAuraGroupEnabled(object.def.key, false)
+		end
 	end
 end
 
@@ -605,13 +671,18 @@ end
 function Private:SyncCustom()
 	for i, entry in ipairs(Private.classDB.custom) do
 		local object = customObjects[i]
-		local def = { spells = entry.spells }
+		local def = { key = 'custom' .. i, spells = entry.spells }
 
 		if not object then
 			object = CreateObject('aura', def, entry)
 			customObjects[i] = object
 		elseif object.def.spells ~= entry.spells then
-			object.container:SetAuraGroupCandidateFilters('reminder', { includeSpellIDs = SpellMap(entry.spells) })
+			local filters = { includeSpellIDs = SpellMap(entry.spells) }
+			object.container:SetAuraGroupCandidateFilters('reminder', filters)
+
+			if object.stride then
+				center:SetAuraGroupCandidateFilters(def.key, filters)
+			end
 		end
 
 		object.def = def

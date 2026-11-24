@@ -14,7 +14,7 @@ Reminder icons for WoW: Forever that show when you are missing a class buff, buf
 - Reminders keep working in combat
 - Per reminder load condition: Always, In Group, In Dungeon or Raid, In Raid Instance or In Combat
 - Per reminder custom text
-- Movable icon row with four growth directions, icon size and spacing
+- Movable icon row with five growth directions (left, right, up, down, centered), icon size and spacing
 - Text options: show or hide, position (below, above, left, right, center), font size, outline, width and color
 - Hide in combat, while resting or on flight paths, always hidden while dead
 - English and German

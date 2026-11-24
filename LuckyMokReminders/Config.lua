@@ -171,6 +171,7 @@ local GrowthOptions = {
 	{ value = 'LEFT', text = L["Left"] },
 	{ value = 'DOWN', text = L["Down"] },
 	{ value = 'UP', text = L["Up"] },
+	{ value = 'CENTER', text = L["Center"] },
 }
 
 local TextPositionOptions = {
