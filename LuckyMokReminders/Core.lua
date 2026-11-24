@@ -39,6 +39,7 @@ local GameFontNormal = GameFontNormal
 local UIParent = UIParent
 local INVSLOT_MAINHAND = INVSLOT_MAINHAND
 local INVSLOT_OFFHAND = INVSLOT_OFFHAND
+local FlowLayoutAxis = AnchorUtil.FlowLayoutAxis
 local ItemEnchantmentSlot = AuraContainerItemEnchantmentSlot
 local ItemClassWeapon = Enum.ItemClass.Weapon
 local WeaponFishingPole = Enum.ItemWeaponSubclass.Fishingpole
@@ -48,6 +49,7 @@ local WeaponFishingPole = Enum.ItemWeaponSubclass.Fishingpole
 -- Center is the holder point a centered row stays in the middle of
 local Growth = {
 	CENTER = { start = 'TOPLEFT', after = 'TOPRIGHT', box = 'TOPRIGHT', boxEnd = 'TOPLEFT', x = 1, y = 0, center = 'TOP' },
+	CENTER_VERTICAL = { start = 'TOPLEFT', after = 'BOTTOMLEFT', box = 'BOTTOMLEFT', boxEnd = 'TOPLEFT', x = 0, y = -1, vertical = true, center = 'LEFT' },
 	RIGHT = { start = 'TOPLEFT', after = 'TOPRIGHT', box = 'TOPRIGHT', boxEnd = 'TOPLEFT', x = 1, y = 0 },
 	LEFT = { start = 'TOPRIGHT', after = 'TOPLEFT', box = 'TOPLEFT', boxEnd = 'TOPRIGHT', x = -1, y = 0 },
 	DOWN = { start = 'TOPLEFT', after = 'BOTTOMLEFT', box = 'BOTTOMLEFT', boxEnd = 'TOPLEFT', x = 0, y = -1, vertical = true },
@@ -151,15 +153,15 @@ local function CreateContainer()
 	return container
 end
 
--- Shared by all reminders, 1px plus one stride wide per present aura, so its middle is half of the hidden length
+-- Shared by all reminders, 1px plus one stride long per present aura, so its middle is half of the hidden length
 local center = CreateContainer()
-center:SetFlowLayoutPadding(1, 0, 0, 0)
+center:SetFlowLayoutPadding(1, 0, 1, 0)
 
 local function UpdateCenter(object, stride)
 	if object.stride == stride then return end
 
 	local def = object.def
-	local layout = { elementWidth = stride, elementHeight = 1 }
+	local layout = { elementWidth = stride, elementHeight = stride }
 
 	if object.kind == 'enchant' then
 		if not object.stride then
@@ -441,8 +443,10 @@ function Private:Layout()
 
 	-- Starts where the row would with every reminder showing, the first slot follows its middle
 	if growth.center then
+		local offset = (Private.db.spacing - shown * stride - 1) / 2
+		center:SetFlowLayoutAxis(growth.vertical and FlowLayoutAxis.Vertical or FlowLayoutAxis.Horizontal)
 		center:ClearAllPoints()
-		center:SetPoint(growth.start, holder, growth.center, (Private.db.spacing - shown * stride - 1) / 2, 0)
+		center:SetPoint(growth.start, holder, growth.center, growth.x * offset, growth.y * offset)
 	end
 
 	center:SetShown(growth.center ~= nil)
