@@ -617,8 +617,9 @@ end
 
 local function UpdateKnown()
 	for _, object in ipairs(baseObjects) do
-		if object.def.class and object.kind ~= 'group' then
-			object.available = IsKnown(object.def.known or object.def.spells)
+		local def = object.def
+		if def.class and object.kind ~= 'group' then
+			object.available = IsKnown(def.known or def.spells) and not (def.notKnown and IsKnown(def.notKnown))
 		end
 	end
 end

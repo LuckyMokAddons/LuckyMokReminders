@@ -23,9 +23,10 @@ Private.Reminders = {
 		key = 'trueshotAura', class = 'HUNTER', name = 19506, icon = 19506,
 		spells = { 19506, 20905, 20906, 1299346, 1299348 },
 	},
+	-- The Lone Wolf talent replaces the pet
 	{
 		key = 'hunterPet', class = 'HUNTER', label = L["Pet"], icon = 883, pet = true,
-		known = { 883 },
+		known = { 883 }, notKnown = { 415370 },
 	},
 
 	-- Mage

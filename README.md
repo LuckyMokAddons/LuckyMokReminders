@@ -8,7 +8,7 @@ Reminder icons for WoW: Forever that show when you are missing a class buff, buf
 
 - Class buffs your character can cast, only shown once you know the spell (any rank counts, group versions count too)
 - Buff food, flasks and temporary weapon enchants (stones, oils, poisons, shaman imbues) for main hand and off hand
-- Missing pet reminder for hunters and warlocks, a Demonic Sacrifice buff counts as having the pet
+- Missing pet reminder for hunters and warlocks, a Demonic Sacrifice buff counts as having the pet and the Lone Wolf talent turns the hunter reminder off
 - Optional group count on group buffs: a second icon shows how many group members are missing your buff
 - Custom reminders: enter any spell IDs and get a reminder while none of them is on you
 - Reminders keep working in combat
